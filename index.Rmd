@@ -1,7 +1,7 @@
 ---
-title: "My Website"
+title: "Computational Biology Portfolio"
 author: "Emily Dombrowski"
-date: "2024-1-24"
+date: "Created 2024-1-24"
 output: 
   html_document: 
     theme: yeti
@@ -10,5 +10,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(exho=TRUE)
 ```
+
+# Welcome
+Hello, welcome to my portfolio for my assignments for Computational Biology (BIOL 6100) Spring 2024.
 
 This is the link for the assignment 1: [Link](newpage.html)
