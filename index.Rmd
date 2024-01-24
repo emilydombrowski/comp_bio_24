@@ -2,6 +2,9 @@
 title: "My Website"
 author: "Emily Dombrowski"
 date: "2024-1-24"
+output: 
+  html_document: 
+    theme: yeti
 ---
 
 ```{r setup, include=FALSE}

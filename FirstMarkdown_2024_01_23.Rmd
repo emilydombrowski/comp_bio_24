@@ -2,7 +2,9 @@
 title: "Working with Markdown"
 author: "Emily Dombrowski"
 date: "2024-01-23"
-output: html_document
+output: 
+  html_document: 
+    theme: yeti
 ---
 
 ```{r setup, include=FALSE}
