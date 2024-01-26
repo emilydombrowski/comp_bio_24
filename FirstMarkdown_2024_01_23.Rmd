@@ -5,11 +5,14 @@ date: "2024-01-23"
 output: 
   html_document: 
     theme: yeti
+    highlight: tango
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+This is a practice document with markdown formatting and practice LaTex commands. 
 
 For markdown, use asterisks to *indicate italic text*.
 
@@ -58,3 +61,39 @@ We can also use Latex in line with a single dollar sign $a +b=c$ like this.
 ## Subscripts in LaTex
 
 $$ H_0 = Z_{a +b}$$
+
+
+$$S=cA^z_1 + z_{a+b}$$
+
+## Fractions and greek letters
+$${\alpha = \frac{\beta}{\delta + \gamma_x}}$$
+
+$$z + \sum_{i=1}^X{k}$$
+
+## Escaping the backslash character
+$$\backslash \alpha \le b \backslash$$
+
+## Rendering in plain text
+$$P(Occurrence of Species A) = Z$$ 
+...looks wrong! Renders plain text as mathmatical variables. 
+
+$$P(\mbox{Occurrence of Species A}) = Z$$
+Used mbox command which alleviates this issue
+
+Easy to embed latex in line $\pi + 3$ like so. We can also use markdown fencing in line with a single backtick `pi + 3` like this. We can even execute r code inside of markdown text `r pi + 3` (reads out as computed answer rather than unformatted code.)
+
+```{r eval=TRUE, echo=FALSE}
+# Use comments extensively in ALL of your coding!
+Pred <- seq(1,10)     # make a vector of integers from 1 to 10
+Res <- runif(10)      # generate 10 draws from a random uniform (0,1) distribution
+
+# print the random numbers
+print(Res)
+
+# plot the graph
+plot(x=Pred,y=Res,type="b")
+```
+```{r}
+plot(runif(50),cex=10*runif(50),col="goldenrod")
+
+```
