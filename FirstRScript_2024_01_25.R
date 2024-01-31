@@ -9,6 +9,7 @@
 library(ggplot2)
 set.seed(100)
 library(TeachingDemos) # use this to set the random number seed from a character string
+
 char2seed("green tea")
 char2seed("green tea",set=FALSE)
 # important for reproducibility. Ensures the same nu,bers are pulled and regenerated. 
@@ -27,3 +28,15 @@ ranVar2 <- rnorm(nRep)
 # visualize data
 qplot(x=ranVar1)
 
+# create product vector
+ranProd <- ranVar1*ranVar2
+length(ranProd)
+
+## Some notes about keyboard shortcuts for scripts
+# I'm typing code that I want to comment out and then using
+# control shift c to comment it out
+# Some other shortcuts: 
+#   - ctl return -> run code
+#   - ctl shift return -> runs whole script
+      # - It runs and prints output for whole script
+#   - ctl shift s -> runs whole script without printing

@@ -1,0 +1,79 @@
+---
+title: "comp_bio_hw3"
+author: "Emily Dombrowski"
+date: "2024-01-31"
+output: html_document
+---
+# Question 1
+```
+First String    Second      1.22      3.4
+Second          More Text   1.555555  2.2220
+Third           x           3         124
+```
+To change this into a properly formatted .csv ("columns" separated by a single comma), I used the command *find* ```\s  *``` (note the two spaces) and *replace* ```,```.
+This output: 
+```
+First String,Second,1.22,3.4
+Second,More Text,1.555555,2.2220
+Third,x,3,124
+```
+
+
+# Question 2
+```
+Ballif, Bryan, University of Vermont
+Ellison, Aaron, Harvard Forest
+Record, Sydne, Bryn Mawr
+```
+To capture the relevant information, I used the expression `(\w+), (\w+), (.*)`, which selected the first word, the second word, then .* captured everything else. I changed the order of commands with `\2 \1 (\3)`, which indicates putting the second capture ahead of the first capture, then putting the third capture in parentheses.
+```
+Bryan Ballif (University of Vermont)
+Aaron Ellison (Harvard Forest)
+Sydne Record (Bryn Mawr)
+```
+
+# Question 3
+```
+0001 Georgia Horseshoe.mp3 0002 Billy In The Lowground.mp3 0003 Winder Slide.mp3 0004 Walking Cane.mp3
+```
+To capture the data between the number and .mp3, I used `.mp3 `, and I replaced it with `.mp3\n`. 
+
+```
+0001 Georgia Horseshoe.mp3
+0002 Billy In The Lowground.mp3
+0003 Winder Slide.mp3
+0004 Walking Cane.mp3
+```
+
+# Question 4
+```
+0001 Georgia Horseshoe.mp3
+0002 Billy In The Lowground.mp3
+0003 Winder Slide.mp3
+0004 Walking Cane.mp3
+```
+
+Search: `(\w+) (\w.*)(.mp3)` To search this, I started by choosing the first "word" (the first four digit number), and then I chose all of the words in the song title up until the .mp3 part of the name.  I replaced this with `\2_\1\3` to choose the second part of the phrase, separate it with an underscore from the first part of the phrase, then I added in the .mp3 as the final component. 
+
+```
+Georgia Horseshoe_0001.mp3
+Billy In The Lowground_0002.mp3
+Winder Slide_0003.mp3
+Walking Cane_0004.mp3
+```
+
+
+# Question 5
+```
+Camponotus,pennsylvanicus,10.2,44
+Camponotus,herculeanus,10.5,3
+Myrmica,punctiventris,12.2,4
+Lasius,neoniger,3.3,55
+```
+Search: `(\w)\w+,(\w+),\w+.\w+(,\w+)` First, I defined each "word" in the phrase using \w. I used parentheses to capture the parts that I was interested in keeping. Then, I rearranged the components that I kept and added an underscore using \1, \2, and \3 to indicate the parts of the phrase I was interested in. Replace: `\1_\2\3`
+
+# Question 6
+Using the original data from question 5, I searched  `(\w)\w+,(\w{4})\w+,\w+.\w+(,\w+)` to preserve the first letter of the first word, preserve the first 4 letters of the second word, and to keep the last word--number--of the df. I replaced using `\1_\2\3` to stitch these together. 
+
+# Question 7
+Similar to the last two, I searched `(\w{3})\w+,(\w{3})\w+,(\w+).(\w+),(\w+)` to preserve the first three letters of the first word, the first three letters of the second word, then I separated out and preserved the other relevant "words," with most of them being parts of a number. For the replace function, I used `\1\2, \5, \3.\4` to restitch together the species name and numbers in the way that was prompted. 

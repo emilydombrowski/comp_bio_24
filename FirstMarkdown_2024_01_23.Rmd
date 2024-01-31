@@ -50,6 +50,12 @@ First header | Second header
 Content cell | Content cell
 Content cell | Content cell
 
+```{r}
+# first  chunk of code in rmd file
+print(pi)
+pi + 3
+```
+
 ```
 Fencing sets boundaries and everything inside the fencing *is shown as literal text* without rendering
 ```
