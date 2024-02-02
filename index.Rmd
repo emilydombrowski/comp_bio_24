@@ -14,4 +14,4 @@ knitr::opts_chunk$set(exho=TRUE)
 # Welcome
 Hello, welcome to my portfolio for my assignments for Computational Biology (BIOL 6100) Spring 2024.
 
-This is the link for the assignment 1: [Link](newpage.html)
+This is the link Homework #3: [Link](hw3.html)

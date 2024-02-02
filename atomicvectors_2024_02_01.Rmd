@@ -1,0 +1,160 @@
+---
+title: "atomicvectors_2024_02_01"
+author: "Emily Dombrowski"
+date: "2024-02-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Comp bio 2024-02-1
+Markdown for evaluating atomic vectors and useful functions
+```{r}
+x <- 5 # preferred
+y = 4 # legal but not used except in function defaults
+y = y + 1.1
+print(y)
+```
+
+```{r}
+y <- y + 1.1
+print(y)
+```
+
+# Variable names
+```{r}
+z <- 3 # begin with lower case. letter
+plantHeight <- 10 # option "camelCaseFormatting"
+plant.height <- 4.2 # acoid periods
+plant_height <- 3.3 # optimal "snake_case_formatting"
+. <- 5.5 # reserve this for a generic temporary variable (more later)
+print(.) # this works but its not showing up in my environment. Kind of weird
+```
+
+# Types of variables
+* Characters
+* Doubles
+* Factors (characters but used for statistical factors)
+* Integers
+* Vectors with lists
+
+# Combine function
+```{r}
+z <- c(3.2, 5, 5, 6)
+print(z)
+typeof(z)
+is.numeric(z)
+```
+
+## (c) always "flattens" to an atomic vector
+Flatten means it doesn't retain structure of concatenation. It ignores internal structure and strings together functions. 
+```{r}
+z <- c(c(3,4), c(5,6))
+print(z)
+```
+
+# Building character strings with single or double quotes
+```{r}
+z <- c("perch", "bass", 'trout')
+# flexibility with character strings single or double quotes
+print(z)
+
+z <- c("This is only 'one' character string", 'a second')
+print(z)
+typeof(z)
+is.character(z)
+```
+
+# Building logicals
+```{r}
+# Boolean, not with quotes, all caps
+z <- c(TRUE,TRUE,FALSE)
+# avoid abbreviations T, F which will work
+print(z)
+typeof(z)
+is.logical(z)
+is.integer(z)
+```
+
+# Specifing elements of a matrix
+```{r}
+dogs <- c("chow","pug","beagle","greyhound","akita")
+dogs[1] # picks first element
+dogs[2] 
+dogs[6] # outside of bounds, gives us [NA]
+
+# pass the brackets a group of elements (= a vector) to subset the vector
+dogs[c(3,5)]
+
+# works with multiple repeats
+dogs[c(1,1,1,4)]
+dogs[] # gives us the whole df
+
+length(dogs)
+dogs[5]
+dogs[length(dogs)]
+
+# sometimes, it is faster to specify what we *don't want* in vectors.
+dogs[-1]
+
+# we can also use double negatives
+dogs[c(-2,-4)]
+dogs[-c(2,4)]
+dogs[c(-1,2)] # gives error, doesn't want different operations (+/-) in same command
+```
+While coding, using numbers in this way isn't super useful--if one line of a file changes, it will break your whole code. Using objects and functions is better.
+
+# Three properties of vectors
+## Type
+```{r}
+z <- c(1.1, 1.2, 3, 4.4)
+typeof(z)
+is.numeric(z)
+as.character(z) # doesn't change z permanantly/globally
+print(z)
+typeof(z)
+
+z2 <- as.character(z)
+print(z2)
+typeof(z2)
+
+length(z)
+length(y_not) # gives an error if variable doesn't exist
+```
+
+## Names
+```{r}
+z <- runif(5)
+# optional attribute not initially assigned
+print(z)
+names(z)
+names(z) <- c("chow","pug","beagle","greyhound","akita")
+print(z)
+
+z2 <- c(gold=3.3, silver=10, lead=2)
+print(z2)
+
+# reset names
+names(z2) <- NULL
+print(z2)
+names(z2) <- c("COPPER", "ZINC")
+```
+
+# Special Data Types
+```{r}
+# NA values
+z <- c(3.2, 3.3, NA)
+typeof(z)
+length(z)
+typeof(z[3]) # keeps track of variable as double
+
+z1 <- NA
+typeof(z1)
+
+is.na(z) # output is boolean. Logical to find missing values
+!is.na(z)
+mean(z)
+```
+
