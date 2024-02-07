@@ -158,3 +158,71 @@ is.na(z) # output is boolean. Logical to find missing values
 mean(z)
 ```
 
+```{r}
+a <- c(2, 2.0 )
+typeof(a)
+
+# if elements are of different types r coerces them to a
+# common type...hierarchy
+# logical -> integer -> double -> character
+
+a <-c(2, 3, "3")
+print(a)
+# converts a to character
+
+a <- c(1,2,2,l)
+print(a)
+# gives error and allows us to identify issues in data
+# collection
+
+a <- runif(10)
+print(a)
+
+# comparison operators yield a logical result
+a > 0.50
+
+# conduct math operations on this vector of logical
+# tru/fales values
+
+# how many elements in the vector are > 0.5?
+sum(TRUE, TRUE) # value gets coerced to integer
+sum(a > 0.5) 
+
+# what proportion of vector values are > 0.05?
+sum(a > 0.5)/length(a)
+mean(a > 0.5)
+
+# qualifying exam question in biology
+# approximately what proportion of observations drawn from
+# a standard normal distribution are larger than 2.0
+
+mean(rnorm(1,000) > 2.0) 
+```
+# vectorization
+```{r}
+z <- c(10,20,30)
+z + 1
+z <- 10
+z + 1
+
+z <- c(10, 20, 30)
+y <- c(1, 2, 3)
+
+z + y
+
+y^2
+
+10 + 3*y + 2*y^2
+# applies to each value in the list
+```
+Powerful operaations compactly by setting it up this way. This makes r coding pretty compact, in other languages we'd need to write for loops to address this.
+
+# Recycling
+What if the vector lengths are not equal to eachother?
+```{r}
+z <- c(10,20,30)
+x <- c(1,2)
+
+z+x
+```
+We get an output alongside an error message: "Warning: longer object length is not a multiple of shorter object length." It goes back and recycles the 1 and the first value in the shorter vector gets used again. 
