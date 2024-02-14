@@ -39,9 +39,9 @@ mean_r4 <- mean(m[4,])
 
 # read about the eigen() function and use it on your matrix
 # Computes eigenvalues and eigenvectors of numeric (double, integer, logical) or complex matrices.
-# an eigen vector is a vector associated with a set of linear equations
-# an eigen value is the factor by which an eigen vector is squished
-# these functions can only be used with square matrices
+# an eigen vector is a constant value in a linear transformation that is applied to matrix.
+# an eigen value is the factor by which an eigen vector is squished or stretchrf
+# these functions can only be used with square matrices. They are used to reduce the dimensionality of matrices, allowing downstream analysis. 
 
 eigen_m <- eigen(m)
 print(eigen_m)
