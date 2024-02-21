@@ -1,0 +1,146 @@
+---
+title: "hw6.Rmd"
+author: "Emily Dombrowski"
+date: "2024-02-21"
+output: html_document
+---
+# Homework #6
+# Question 1 
+I ran the code with the example simulation data provided in the and then commented out the simulation. 
+# Question 2. 
+For this assignment, I am using an open souce data set about the [titanic](https://github.com/datasciencedojo/datasets/blob/master/titanic.csv). The variable that I assign as myVar is age. I am interested to see how age distribution on the ship compares to my expectation about age structures in developped countries. Beyond not expecting there to be an over abundance of super old or super young individuals, I do not have many assumptions about the fit of the data. 
+```{r Library and Data Read In}
+# read in libraries relevant for running this code
+library(ggplot2) # for graphics
+library(MASS) # for maximum likelihood estimation
+library(dplyr)
+```
+
+```{r}
+# read in data set
+# open source data set about the titanic
+z <- read.csv("titanic.csv")
+z <- na.omit(z)
+str(z)
+summary(z)
+
+z$myVar <- z$Age
+
+# assigns age as column new name myVar
+```
+
+
+# quick and dirty, a truncated normal distribution to work on the solution set
+```{r Fake Data}
+# z <- rnorm(n=3000,mean=0.2)
+# z <- data.frame(1:3000,z)
+# names(z) <- list("ID","myVar")
+# z <- z[z$myVar>0,]
+# str(z)
+# summary(z$myVar)
+```
+
+```{r message=FALSE, warning=FALSE}
+p1 <- ggplot(data=z, aes(x=myVar, y=after_stat(..density..))) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) 
+print(p1)
+```
+
+```{r message=FALSE, warning=FALSE}
+p1 <-  p1 +  geom_density(linetype="dotted",size=0.75)
+print(p1)
+```
+
+```{r message=FALSE, warning=FALSE}
+normPars <- fitdistr(z$myVar,"normal")
+print(normPars)
+str(normPars)
+normPars$estimate["mean"] # note structure of getting a named attribute
+```
+
+```{r message=FALSE, warning=FALSE}
+meanML <- normPars$estimate["mean"]
+sdML <- normPars$estimate["sd"]
+
+xval <- seq(0,max(z$myVar),len=length(z$myVar))
+
+stat <- stat_function(aes(x = xval, y = ..y..),
+                      fun = dnorm, colour="red",
+                      n = length(z$myVar),
+                      args = list(mean = meanML, sd = sdML)) 
+p1 + stat
+
+```
+
+```{r message=FALSE, warning=FALSE}
+expoPars <- fitdistr(z$myVar,"exponential")
+rateML <- expoPars$estimate["rate"]
+
+stat2 <- stat_function(aes(x = xval, y = ..y..), fun = dexp, colour="blue", n = length(z$myVar), args = list(rate=rateML))
+ p1 + stat + stat2
+```
+```{r message=FALSE, warning=FALSE}
+stat3 <- stat_function(aes(x = xval, y = ..y..), fun = dunif, colour="darkgreen", n = length(z$myVar), args = list(min=min(z$myVar), max=max(z$myVar))) 
+p1 + stat + stat2 + stat3
+```
+
+```{r message=FALSE, warning=FALSE}
+gammaPars <- fitdistr(z$myVar,"gamma")
+shapeML <- gammaPars$estimate["shape"]
+rateML <- gammaPars$estimate["rate"]
+
+stat4 <- stat_function(aes(x = xval, y = ..y..), fun = dgamma, colour="brown", n = length(z$myVar), args = list(shape=shapeML, rate=rateML))
+ p1 + stat + stat2 + stat3 + stat4
+```
+
+```{r message=FALSE, warning=FALSE}
+pSpecial <- ggplot(data=z, aes(x=myVar/(max(myVar + 0.1)), y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) + 
+  xlim(c(0,1)) +
+  geom_density(size=0.75,linetype="dotted")
+
+betaPars <- fitdistr(x=z$myVar/max(z$myVar + 0.1),start=list(shape1=1,shape2=2),"beta")
+shape1ML <- betaPars$estimate["shape1"]
+shape2ML <- betaPars$estimate["shape2"]
+
+statSpecial <- stat_function(aes(x = xval, y = ..y..), fun = dbeta, colour="orchid", n = length(z$myVar), args = list(shape1=shape1ML,shape2=shape2ML))
+pSpecial + statSpecial
+```
+
+# Question 3
+The data that best approximates my data is the normal distribution (I was between the normal distributuion and the beta distribution, but I think the normal distribution captures the lower number of observations at the beginning of the dataset). 
+
+# Question 4
+Simulate a new data set using the best distribution observed from this data. I simulated my data with a normal distribution, which I think captures the simulated data pretty well. Again, I think the Beta distribution could have similarly captured this pattern.
+```{r message=FALSE, warning=FALSE}
+length(z$myVar) # 714
+
+normPars <- fitdistr(z$myVar,"normal")
+print(normPars)
+# mean          sd    
+#   29.6991176   14.5163212
+str(normPars)
+mean_sim <- normPars$estimate["mean"]
+sd_sim <- normPars$estimate["sd"]
+
+z$simdat <- rnorm(n = length(z$myVar), mean = mean_sim, sd = sd_sim)
+
+s1 <- ggplot(z, aes(x=simdat, y=after_stat(..density..))) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) 
+print(s1)
+
+s1 <-  s1 +  geom_density(linetype="dotted",size=0.75)
+print(s1)
+
+meanML <- normPars$estimate["mean"] 
+sdML <- normPars$estimate["sd"]
+# same from earlier because distribution was generated with this information
+
+xval_s1 <- seq(0,max(z$simdat),len=length(z$simdat))
+
+stat_s1 <- stat_function(aes(x = xval_s1, y = ..y..),
+                      fun = dnorm, colour="red",
+                      n = length(z$simdat),
+                      args = list(mean = meanML, sd = sdML)) 
+s1 + stat_s1
+```
