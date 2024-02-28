@@ -1,0 +1,194 @@
+---
+title: "hw7.Rmd"
+author: "Emily Dombrowski"
+date: "2024-02-28"
+output: html_document
+---
+# Homework Assignment 8: Exploring Hypotheses
+
+## Study background
+For my thesis, I am interested in studying the effects of temperature on survival of different species in a hybrid zone of *Mytilus* mussels. We are testing the hypothesis, "hybrid *Mytilus* have novel temperature tolerance traits that facillitate their survival," and testing this hypothesis by looking at survival of larval mussels in different temperatures. The different species I will be looking at are *Mytilus galloprovinciallis* (MG), *Mytilus planulatus* (MP), and introgressed offspring between the two (MGxMP). I will be subjecting larvae for each of these to two temperature treatments, 18 deggrees celcius and 25 degreese celcius. For this assignment, I am using information about MG and MP temperature tolerance to simulate mean survival rate in the different species. To get approximates for temperature tolerance, I am using a paper by Iva Popovic and Cynthia Riginos titiled "Comparative genomics reveals divergent thermal selection in warm- and cold-tolerant mussels." 
+For this simulation, I am assuming the following thermal optima for each species: 
+MG thermal optimum: 19.7 degrees C
+MP thermal optimum: 11.2 degrees C
+
+A null hypothesis for this study is that "Hybrid mussels have intermediate thermal tolerances." This claim has been evaluated in fruit flies in my lab and found to be true. I ran these analyses assuming this trend. 
+
+## Load in relevant libraries
+```{r, echo = TRUE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(MASS)
+```
+
+## Data simulation
+Given MG's higher thermal tolerance, I will be assuming that larvae at higher temperatures will survive at a higher proportion. I am simulating 50 replicates of each larval experiment, and then combining into a data frame. For this assignment, I will assume that hybrid MG x MP have an intermediate survival rate.
+```{r}
+# simulated MG
+mg_sur_25 <- rnorm(n = 50, mean = 0.65, sd = 0.048)
+mg_sur_18 <- rnorm(n = 50, mean = 0.85, sd = 0.076)
+
+# simulated MP
+mp_sur_25 <- rnorm(n = 50, mean = 0.37, sd = 0.086)
+mp_sur_18 <- rnorm(n = 50, mean = 0.71, sd = 0.053)
+
+# simulated hybrid MG X MP
+hy_sur_25 <- rnorm(n=50, mean = 0.52, sd = 0.041)
+hy_sur_18 <- rnorm(n=50, mean = 0.75, sd = 0.076)
+
+# combine Atomic vectors so they can go into DF
+surv_rate <- c(mp_sur_18, mg_sur_18, hy_sur_18, mp_sur_25, mg_sur_25, hy_sur_25)
+
+temp_treatment <- c(rep(18, 150), rep(25, 150))
+
+species <- c(rep("MP", 50), rep("MG", 50), rep("HY", 50),rep("MP", 50), rep("MG", 50), rep("HY", 50))
+```
+
+## Data frame construction
+I combined my simulated vectors into a data frame. A major troubleshooting factor I needed to consider was that temperature is being input into the data frame as two numbers, but these are factors for the purpose of the data analysis. Up front, it is important to define temperature as a factor. 
+```{r}
+dat <- data.frame(index=1:length(surv_rate),
+                   surv_rate=surv_rate,
+                   temp=temp_treatment,
+                   species=species)
+dat$temp<-as.factor(dat$temp)
+
+# Define temperature as.factor for later analysis. Otherwise, it will be treated as a continuous variable, which isn't useful for this analysis.
+
+# check out structure of data frame and make sure it's how I expect
+head(dat)
+str(dat)
+```
+## Analyze data using ANOVA
+Given that my data is separated into distinct groupings (species) and we are interested in evaluating the effects of two temperatures, the best way to analyze this data is using an ANOVA. 
+I ran an anova to look at survival rate as an effect of temperature, as an effect of species, and as an effect of temperatuer and species. 
+```{r}
+# Run ANOVA
+ANOmodel <- aov(surv_rate~temp + species + temp:species,data=dat)
+
+# Check out ANOVA
+print(ANOmodel)
+print(summary(ANOmodel))
+z <- summary(ANOmodel)
+str(z)
+```
+
+## Graph the data
+I used a boxplot in ggplot to visualize my data. This makes sense because it allows comparison of different survival rates among the different species contextualized by temperature. It allows the viewer to discern these relationships between categorical data.
+```{r}
+boxplot <-ggplot(data=dat) +
+  aes(x=temp, y=surv_rate, fill=species) +
+  geom_boxplot() +
+  xlab("Temperature (°C)") +
+  ylab("Survival Rate")
+boxplot + labs(fill = "Species") + theme(panel.background = element_blank())
+```
+
+## Data simulation manipulation: randomly generated means
+For this manipulation, I will randomly generate 6 means with a uniform distribution and input those for my mean values to see how this alters data understanding. 
+
+I set a seed so that my results, though random, will be consistently the same upon replication of this document. By chance and as an effect of the standard deviations, there were still statistical differences in my data. This is interesting. When I reduce the size of the difference in means to between 0.4 and 0.75, I no longer see a statistically significant relationship with temperature. 
+```{r}
+# Randombly generated means
+set.seed(04199968)
+mean <- runif(n=6, min = 0.4, max = 0.75)
+
+# simulated MG
+mg_sur_25 <- rnorm(n = 50, mean = mean[1], sd = 0.048)
+mg_sur_18 <- rnorm(n = 50, mean = mean[2], sd = 0.076)
+
+# simulated MP
+mp_sur_25 <- rnorm(n = 50, mean = mean[3], sd = 0.086)
+mp_sur_18 <- rnorm(n = 50, mean = mean[4], sd = 0.053)
+
+# simulated hybrid MG X MP
+hy_sur_25 <- rnorm(n=50, mean = mean[5], sd = 0.041)
+hy_sur_18 <- rnorm(n=50, mean = mean[6], sd = 0.076)
+
+# combine Atomic vectors so they can go into DF
+surv_rate <- c(mp_sur_18, mg_sur_18, hy_sur_18, mp_sur_25, mg_sur_25, hy_sur_25)
+
+temp_treatment <- c(rep(18, 150), rep(25, 150))
+
+species <- c(rep("MP", 50), rep("MG", 50), rep("HY", 50),rep("MP", 50), rep("MG", 50), rep("HY", 50))
+
+```
+
+```{r}
+dat <- data.frame(index=1:length(surv_rate),
+                   surv_rate=surv_rate,
+                   temp=temp_treatment,
+                   species=species)
+dat$temp<-as.factor(dat$temp)
+```
+
+```{r}
+# Run ANOVA
+ANOmodel <- aov(surv_rate~temp + species + temp:species,data=dat)
+
+# Check out ANOVA
+print(ANOmodel)
+print(summary(ANOmodel))
+z <- summary(ANOmodel)
+str(z)
+```
+
+```{r}
+boxplot <-ggplot(data=dat) +
+  aes(x=temp, y=surv_rate, fill=species) +
+  geom_boxplot() +
+  xlab("Temperature (°C)") +
+  ylab("Survival Rate")
+boxplot + labs(fill = "Species") + theme(panel.background = element_blank())
+```
+## Sample size manipulation
+Even when I reduce my sample size from 50 to 5, with the data I input there is a statistically significant relationship. This is likely due to my mean and SD differences. This is interesting if the means and SDs are biologically relevant for our experiment. 
+```{r}
+# simulated MG
+mg_sur_25 <- rnorm(n = 5, mean = 0.65, sd = 0.048)
+mg_sur_18 <- rnorm(n = 5, mean = 0.85, sd = 0.076)
+
+# simulated MP
+mp_sur_25 <- rnorm(n = 5, mean = 0.37, sd = 0.086)
+mp_sur_18 <- rnorm(n = 5, mean = 0.71, sd = 0.053)
+
+# simulated hybrid MG X MP
+hy_sur_25 <- rnorm(n=5, mean = 0.52, sd = 0.041)
+hy_sur_18 <- rnorm(n=5, mean = 0.75, sd = 0.076)
+
+# combine Atomic vectors so they can go into DF
+surv_rate <- c(mp_sur_18, mg_sur_18, hy_sur_18, mp_sur_25, mg_sur_25, hy_sur_25)
+
+temp_treatment <- c(rep(18, (5*6)/2), rep(25, (5*6)/2))
+
+species <- c(rep("MP", 5), rep("MG", 5), rep("HY", 5),rep("MP", 5), rep("MG", 5), rep("HY", 5))
+
+```
+
+```{r}
+dat <- data.frame(index=1:length(surv_rate),
+                   surv_rate=surv_rate,
+                   temp=temp_treatment,
+                   species=species)
+dat$temp<-as.factor(dat$temp)
+```
+
+```{r}
+# Run ANOVA
+ANOmodel <- aov(surv_rate~temp + species + temp:species,data=dat)
+
+# Check out ANOVA
+print(ANOmodel)
+print(summary(ANOmodel))
+z <- summary(ANOmodel)
+str(z)
+```
+
+```{r}
+boxplot <-ggplot(data=dat) +
+  aes(x=temp, y=surv_rate, fill=species) +
+  geom_boxplot() +
+  xlab("Temperature (°C)") +
+  ylab("Survival Rate")
+boxplot + labs(fill = "Species") + theme(panel.background = element_blank())
+```

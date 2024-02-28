@@ -20,4 +20,6 @@ This is the link to [Homework #4](hw4.html). This homework explores the use of a
 
 This is the link to [Homework #5](hw5.html). This homework evaluates matrices, lists, and working with data structures. 
 
-This is the link to [Homework #5](hw6.html). This homework looks at simulating data and distributions. 
+This is the link to [Homework #6](hx6.html). This homework looks at simulating data and distributions.
+
+This is the link to [Homewor #7](hw7.html). This homework simulates data and uses statistical tests and boxplots to evaluate hypothesized relationships. 
