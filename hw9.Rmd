@@ -1,0 +1,125 @@
+---
+title: "hw9.Rmd"
+author: "Emily Dombrowski"
+date: "2024-03-27"
+output: html_document
+---
+# "Script" 1: Simulate Data. 
+This is a back-end function file that is from an R script. This file is used to have more extensive documentation about functions and to completely generate everything before it goes into the final script. 
+```{r}
+# Data generation file
+# FunctionsFile.R
+
+library(ggplot2)
+
+# global variables for df input
+mean_vec = c(0.65, 0.85, 0.37, 0.71, 0.52, 0.75)
+sd_vec = c(0.048, 0.076, 0.086, 0.053, 0.041, 0.076)
+num = 50
+
+##################################################
+# function: gendata
+# This is a function to generate simulated data using rnorm for multiple
+# parameters, then to create a dataframe.
+# input: number of observations, mean values, and standard deviations
+# output: a data frame for analysis
+#-------------------------------------------------
+
+
+gendata <- function(n = num, mean = mean_vec, sd = sd_vec){
+  mg_sur_25 <- rnorm(n = num, mean = mean_vec[1],
+                     sd = sd_vec[1])
+  
+  mg_sur_18 <- rnorm(n = num, mean = mean_vec[2],
+                     sd = sd_vec[2])
+  
+  mp_sur_25 <- rnorm(n = num, mean = mean_vec[3],
+                     sd = sd_vec[3])
+  
+  mp_sur_18 <- rnorm(n = num, mean = mean_vec[4],
+                     sd = sd_vec[4])
+  
+  hy_sur_25 <- rnorm(n = num, mean = mean_vec[5],
+                     sd = sd_vec[5])
+  
+  hy_sur_18 <- rnorm(n = num, mean = mean_vec[6],
+                     sd = sd_vec[6])
+  
+  conditions <- c(mg_sur_25, mg_sur_18, mp_sur_18,
+                  mp_sur_18,hy_sur_25, hy_sur_18)
+  
+  temp_treatment <- c(rep(18, 150), rep(25, 150))
+  
+  species <- c(rep("MP", 50), rep("MG", 50), rep("HY", 50),rep("MP", 50), rep("MG", 50), rep("HY", 50))
+  
+  aov_df <- data.frame(index=1:length(conditions),
+                       surv_rate=conditions,
+                       temp=temp_treatment,
+                       species=species)
+  return(aov_df)
+}
+
+
+#######################
+# function: sumstats
+# This is a function to generate summary statistics from the previously 
+# generated dataframe.
+# input: previously generated df
+# output: summary table
+#-------------------------------------------------
+
+sumstats <- function(working_df = NULL){
+  working_df = working_df[2]
+  sum_stats <- unlist(summary(working_df))
+  return(sum_stats)
+}
+
+aov_mod <- function(working_df = NULL){
+  anoModel <- aov(surv_rate~temp + species + temp:species,
+                  data=working_df)
+  sumstats <- summary(anoModel)
+  return(sumstats)
+}
+
+# aov_mod(gendata()) # test for debugging
+
+
+#######################
+# function: plot_func
+# This is a function to generate summary plots from the previously 
+# generated dataframe.
+# input: dataframe
+# output: plots
+#-------------------------------------------------
+plot_func <- function(working_df = NULL){
+  boxplot <-ggplot(data=working_df) + 
+    aes(x=as.factor(temp), 
+        y=surv_rate, 
+        fill=species) + 
+    geom_boxplot() + 
+    xlab("Temperature (°C)") + ylab("Survival Rate")
+  
+  plot <- boxplot + labs(fill = "Species") + 
+    theme(panel.background = element_blank())
+
+return(plot)
+  print(plot)
+}
+ 
+```
+# Script 2: running the code in a few lines
+This "front-end" file concisely carries out the relevant operations in very few lines of code by sourcing the file.
+```{r}
+# EGD
+# Homework 9
+# Front-end file 
+source("FunctionsFile.R")
+
+x <- gendata()
+y <- plot_func(x)
+z <- sumstats(x)
+
+print(head(x))
+print(y)
+print(z)
+```

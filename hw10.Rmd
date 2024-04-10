@@ -1,0 +1,109 @@
+---
+title: "hw10"
+author: "Emily Dombrowski"
+date: "2024-04-03"
+output: html_document
+---
+
+```{r,include = FALSE}
+library(tidyverse)
+```
+1. Using a for loop, write a function to calculate the number of zeroes in a numeric vector. Before entering the loop, set up a counter variable counter <- 0. Inside the loop, add 1 to counter each time you have a zero in the vector. Finally, use return(counter) for the output.
+
+```{r}
+counter <- 0 # setting up initial zero condition for counter
+vec <- sample(x = c(0:1), size = 25, replace = TRUE)
+
+for (i in 1:length(vec)) {
+  if (vec[i] == 0)
+  counter <- counter + 1
+}
+
+print(counter)
+```
+
+2. Use subsetting instead of a loop to rewrite the function as a single line of code.
+```{r}
+length(vec[vec == 0])
+```
+
+3. Write a function that takes as input two integers representing the number of rows and columns in a matrix. The output is a matrix of these dimensions in which each element is the product of the row number x the column number.
+```{r}
+
+matrix_frame <- function(numrow, numcol){
+  m <- matrix(nrow = numrow, ncol = numcol)
+   for (i in 1:numrow){
+     for (j in 1:numcol){
+      m[i,j] <- i * j
+   }
+   }
+  return(m)
+  }
+matrix_frame(10,3)
+
+
+```
+
+4. Now let’s practice calling custom functions within a for loops. Use the code from previous lectures on loops and functions to complete the following steps:
+
+-Simulate a dataset with 3 groups of data, each group drawn from a distribution with a different mean. The final data frame should have 1 column for group and 1 column for the response variable.
+-Write a custom function that 1) reshuffles the response variable, and 2) calculates the mean of each group in the reshuffled data. Store the means in a vector of length 3.
+-Use a for loop to repeat the function in b 100 times. Store the results in a data frame that has 1 column indicating the replicate number and 1 column for each new group mean, for a total of 4 columns.
+-Use qplot() to create a histogram of the means for each reshuffled group. Or, if you want a challenge, use ggplot() to overlay all 3 histograms in the same figure. How do the distributions of reshuffled means compare to the original means?
+
+```{r}
+
+var1 <- rnorm(10, 10)
+var2 <- rnorm(10, 20)
+var3 <- rnorm(10, 30)
+
+df <- data.frame(group = c(rep("var1",10),
+                      rep("var2",10),
+                      rep("var3",10)),
+                  response = c(var1, var2, var3))
+
+shuffle <- function(dataframe){
+  shuffle_df <- sample(dataframe$response)
+  dataframe$shuffle <- shuffle_df
+  aggregated <- aggregate(shuffle_df ~ group, dataframe, mean)
+  return(aggregated)
+}
+
+shuffle_output <- shuffle(df)
+mean_vec <- shuffle_output$shuffle_df
+print(mean_vec)
+
+# make empty data frame for the results
+results_df <- data.frame(replicate = numeric(0),
+                         var1_mean = numeric(0),
+                         var2_mean = numeric(0),
+                         var3_mean = numeric(0))
+
+for (i in 1:100){ # initialize 100 reps
+  shuffle_result <- shuffle(df) # call function
+  results_df <- rbind(results_df,# initialize calling empty df
+                      c(i, shuffle_result[1,2],
+                        shuffle_result[2,2],
+                        shuffle_result[3,2]))
+}
+
+colnames(results_df) <- c("replicate", "var1_mean", "var2_mean", "var3_mean")
+
+print(head(results_df))
+
+p1 <- ggplot(data = results_df) +
+  aes(x = var1_mean) +
+  geom_histogram(fill = "thistle", color = "black")
+
+p2 <- ggplot(data = results_df) +
+  aes(x = var2_mean) +
+  geom_histogram(fill = "goldenrod", color = "black")
+
+p3 <- ggplot(data = results_df) +
+  aes(x = var3_mean) +
+  geom_histogram(fill = "thistle", color = "black")
+
+print(p1)
+print(p2)
+print(p3)
+```
