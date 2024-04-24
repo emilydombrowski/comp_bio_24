@@ -30,6 +30,6 @@ This is the link to [Homework #9](hw9.html). This homework is replicating the pr
 
 This is the link to [Homework #10](hw10.html). This homework works with loops.
 
-This is the link to [Homework #11](hw11.html), which uses the BaracudaR practices to do batch processing in R.
+This is the link to [Homework #11](hw11.html), which uses the BaracudaR practices to do batch processing in R. This homework is presented in an Rmarkdown for viewing, but the code is not evaluated because of folder and file placement (this code had to be executed in a separate project and folder structure to incorperate the BaracudaR functions).
 
 This is the link to [Homework #12](hw12.html). In this homework, I explore some plots that I've never made before in ggplot.
