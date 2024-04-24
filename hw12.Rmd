@@ -1,0 +1,51 @@
+---
+title: "hw12.Rmd"
+author: "Emily Dombrowski"
+date: "2024-04-17"
+output: html_document
+---
+
+## load libraries and data
+```{r }
+library(tidyverse)
+ # loads relevant syntax as well as ggplot2 packages
+library(wesanderson)
+library(ggridges)
+library(scales)
+library(plotly)
+
+dat <- iris
+glimpse(dat)
+```
+## Color choice
+```{r}
+show_col(wes_palettes$GrandBudapest2)
+my_cols <- c(wes_palettes$GrandBudapest2)
+```
+
+## Use ggplot to visualize Iris data set with a density plot
+```{r}
+# basic example
+p1 <- ggplot(dat) +
+  aes(x = Sepal.Length, y = Species, fill = Species) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+
+p1 + scale_fill_manual(values = my_cols)
+```
+## Make an interactive plot where points can be animated for more information
+Using interactive graphing with the plotly function
+```{r}
+p2 <- ggplot(dat) +
+  aes(x = Sepal.Length, y = Petal.Length, col = Species) +
+  geom_point() + geom_line() + xlab("Sepal Length") +
+  ylab("Sepal Width")
+
+p2 + scale_fill_manual(values = my_cols)
+
+ggplotly(p2)
+```
+
+
+

@@ -1,0 +1,182 @@
+---
+title: "hw11.Rmd"
+author: "Emily Dombrowski"
+date: "2024-04-24"
+output: html_document
+---
+---
+title: "hw11.Rmd"
+author: "Emily Dombrowski"
+date: "2024-04-24"
+output: html_document
+---
+# Homework 11
+## Emily Dombrowski
+Attached are the scripts I used to execute homework 11. They are in markdown format for easy viewing. 
+
+## Source functions
+```{r, eval = FALSE}
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/DataTableTemplate.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/AddFolder.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/BuildFunction.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/MetaDataTemplate.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/CreatePaddedLabel.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/InitiateSeed.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/SetUpLog.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/SourceBatch.R")
+
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/QBox.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/QCon1.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/QCon2.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/QHist.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/QLogis.R")
+# source("barracudar/QScat.R") # can't open this
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/QBub.R")
+source("/Users/dianeoneal/Desktop/comp_bio_24/StrategicCodingPractices/barracudar/QContour.R")
+```
+
+Set seed
+```{r, eval = FALSE}
+initiate_seed() # preserves random number seed
+
+paths <- list.files(path = "./OriginalData/", pattern = "BART")
+
+filenames <- c()
+
+#use for loop to gather path
+for (i in seq_along(paths)) {
+  # Construct the full path
+  full_path <- paste0("/Users/dianeoneal/Desktop/comp_bio_24/comp_bio_24/hw11/OriginalData/", paths[i])
+  
+  # Check if the directory exists
+  if (dir.exists(full_path)) {
+    setwd(full_path)
+    
+    # List files with pattern "countdata"
+    filenames <- c(filenames, list.files(pattern = "countdata"))
+  } else {
+    cat("Directory does not exist:", full_path, "\n")
+  }
+}
+```
+
+## Pseudocode for initiating functions
+```{r, eval = FALSE}
+# pseudocode functions ----
+# Step 1 Create Pseudocode: describe project with a list of major steps 
+#   cleaning data
+#   extract the year from each file name
+#   calculate abundance
+#   calculate richness
+
+# Step 2 Each list item becomes a function
+# clean_data()
+# extract_year()
+# calc_abundance()
+# calc_richness()
+
+# Step 3: Create function templates as a batch operation
+build_function(function_name = c("clean_dat",
+                 "extract_year",
+                 "calc_abundance",
+                 "calc_richness"))
+
+library(tidyverse)
+source("Functions/CleanDat.R")
+clean_dat(paths)
+
+source("Functions/extract_year")
+extract_year(paths)
+
+source("Functions/calc_abundance")
+calc_abundance(paths)
+
+source("Functions/calc_richness")
+calc_richness(paths)
+```
+
+## Function documentation
+```{r, eval = FALSE}
+# --------------------------------------
+# FUNCTION clean_dat
+# required packages: tidyverse
+# description: a function that cleans the data for any empty/missing cases
+# inputs: paths: file paths that will then be cleaned
+# outputs: cleaned data that can then be processed
+########################################
+clean_dat <- function(path=NULL) {
+  data <- read.csv(path, header=TRUE, comment.char="#")
+  cleaned_data <- filter(data, targetTaxaPresent == "Y")
+  new_name <- paste0("BART_", str_extract(path, pattern="20\\d{2}"), "_countdata_clean.csv")
+  new_path <- paste0("CleanedData/",new_name)
+  write.csv(x=cleaned_data, file=new_path)
+}
+# --------------------------------------
+
+# --------------------------------------
+# FUNCTION extract_year
+# required packages: none
+# description: function required to extract the year
+# inputs: file names
+# outputs: years
+########################################
+extract_year <- function(filenames = NULL){
+  years <- c() # initialize empty vector
+  years <- str_extract(filenames, pattern="20\\d{2}") 
+                       # use regex to identify year
+  return(years) # return vector
+}
+# --------------------------------------
+
+# --------------------------------------
+# FUNCTION calc_richness
+# required packages: none
+# description: calculates species richness (unique number of species)
+# inputs: cleaned csvs that can be analyzed
+# outputs: species richness values
+########################################
+calc_richness <- function(path=NULL){
+  df <- read.csv(path, header=TRUE)
+  return(length(unique(df$scientificName)))
+}
+
+# --------------------------------------
+# calc_richness()
+
+# --------------------------------------
+# FUNCTION calc_abundance
+# required packages: none
+# description:
+# inputs:
+# outputs:
+########################################
+calc_abundance <- function(paths = NULL){
+  data <- read.csv(path, header = TRUE)
+  return(length(data[,1]))
+}
+
+# --------------------------------------
+# calc_abundance()
+```
+
+## Output data frame
+```{r, eval = FALSE}
+# Initiate and fill data frame ----
+df <- data.frame(File = NULL, Year = NULL, Abundance = NULL, Richness = NULL)
+
+for (i in seq_along(file_list)) {
+  clean.data(path=file_list[i])
+}
+
+# outputs list of files that have been cleaned
+clean_list <- list.files("CleanedData", full.names=TRUE)
+
+# for loop that iterates along the cleaned data
+# makes a data framewith year, abundance, and richness
+for (i in seq_along(clean_dat)) {
+  df <- rbind(df, list(File=clean_dat[i],
+                       Year=extract_year(path=clean_list[i]),
+                       Abundance=calc_abundance(path=clean_list[i]),
+                       Richness=calc_richness(path=clean_list[i])))
+}
+```
